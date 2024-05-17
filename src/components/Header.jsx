@@ -1,17 +1,23 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Outlet } from "react-router-dom"
 import images from "./images/user-icon.png"
 
 
 export default function Header() {
+
+  const activeStyle = {
+    color: '#161616',
+    fontWeight: 'bold'
+  }
+  
   return (
     <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
         <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-[60px] items-center border-b px-6 ">
+          <div className="flex h-[60px] items-center border-b px-6">
             <Link to="/" className="flex items-center gap-2 font-semibold text-lg">
               <Package2Icon className="h-6 w-6" />
               <span className="">Daya Agung Mandiri</span>
@@ -19,22 +25,30 @@ export default function Header() {
           </div>
           <div className="flex-1 overflow-auto py-2">
             <nav className="grid items-start px-4 text-base font-medium">
-              <Link to="/" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+              <NavLink to="/" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              style={({ isActive }) => isActive ? activeStyle : null}
+              >
                 <HomeIcon className="h-4 w-4" />
                 Dashboard
-              </Link>
-              <Link to="/inventory" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-900 transition-all text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50">
+              </NavLink>
+              <NavLink to="/inventory" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-500 transition-all dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
+              style={({ isActive }) => isActive ? activeStyle : null}
+              >
                 <PackageIcon className="h-4 w-4" />
                 Inventory
-              </Link>
-              <Link to="/inventory" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-900 transition-all text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50">
+              </NavLink>
+              <NavLink to="/pesanan" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-500 transition-all dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
+              style={({ isActive }) => isActive ? activeStyle : null}
+              >
                 <ShoppingCartIcon className="h-4 w-4" />
                 Pesanan
-              </Link>
-              <Link to="/inventory" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-900 transition-all text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50">
+              </NavLink>
+              <NavLink to="/pelanggan" className="flex items-center gap-3 rounded-lg hover:bg-gray-100 px-3 py-2 text-gray-500 transition-all dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
+              style={({ isActive }) => isActive ? activeStyle : null}
+              >
                 <UsersIcon className="h-4 w-4" />
                 Pelanggan
-              </Link>
+              </NavLink>
             </nav>
           </div>
         </div>

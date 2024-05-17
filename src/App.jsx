@@ -2,7 +2,13 @@ import Inventory from "./components/Inventory"
 import Header from "./components/Header"
 import Dashboard from "./components/Dashboard"
 import AddProduct from "./components/AddProduct"
-// import EditProduct from "./components/EditProduct"
+import Order from "./components/Order"
+import Customers from "./components/Customers"
+import InventoryLayout from "./layout/inventory-layout"
+import Satuan from "./components/Inventory-pages/Unit"
+import Merek from "./components/Inventory-pages/Brand"
+import Jenis from "./components/Inventory-pages/Type"
+import Gudang from "./components/Inventory-pages/Warehouse"
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
 import React, { createContext, useState } from 'react'
 
@@ -14,7 +20,7 @@ export default function App() {
 
   const triggerHighlight = () => {
       setHighlight(true);
-      setTimeout(() => setHighlight(false), 3000); // Reset highlight state after 3 seconds
+      setTimeout(() => setHighlight(false), 3000);
   };
 
   const [formData, setFormData] = useState({
@@ -35,9 +41,18 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Header />}>
             <Route index element={<Dashboard />} />
-            <Route path="inventory" element={<Inventory highlight={highlight} />} />
             <Route path="tambah-produk" element={<AddProduct onAddProduct={triggerHighlight} />} />
-            {/* <Route path="edit-produk" element={<EditProduct />} /> */}
+            <Route path="pesanan" element={<Order />} />
+            <Route path="pelanggan" element={<Customers  />}/>
+
+            <Route path="inventory" element={<InventoryLayout />}>
+              <Route index element={<Inventory highlight={highlight} />} />
+              <Route path="satuan" element={<Satuan />} />
+              <Route path="jenis" element={<Jenis />} />
+              <Route path="merek" element={<Merek />} />
+              <Route path="gudang" element={<Gudang />} />
+            </Route>
+
           </Route>
         </Routes>
       </BrowserRouter>

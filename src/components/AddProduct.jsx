@@ -5,34 +5,79 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import { Toaster, toast } from 'sonner'
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { FormDataContext } from "../App"
 
 
 export default function AddProduct({onAddProduct}) {
 
-  const { formData, setFormData } = useContext(FormDataContext)
+  const {formData, setFormData} = useContext(FormDataContext)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [warehouses, setWarehouses] = useState([])
+  const [unit, setUnit] = useState([])
+  const [type, setType] = useState([])
+  const [brand, setBrand] = useState([])
 
   const navigate = useNavigate()
 
-  console.log(formData)
+    useEffect(() => {
+      fetch('http://localhost:3000/warehouse')
+        .then(response => response.json())
+        .then(data => {
+          setWarehouses(data.data);
+          console.log('Success:', data);
+        })
+        .catch(error => console.error('Error:', error));
+    }, []);
+
+    useEffect(() => {
+      fetch('http://localhost:3000/unit')
+        .then(response => response.json())
+        .then(data => {
+          setUnit(data.data);
+          console.log('Success:', data);
+        })
+        .catch(error => console.error('Error:', error));
+    }, []);
+
+    useEffect(() => {
+      fetch('http://localhost:3000/type')
+        .then(response => response.json())
+        .then(data => {
+          setType(data.data);
+          console.log('Success:', data);
+        })
+        .catch(error => console.error('Error:', error));
+    }, []);
+
+    useEffect(() => {
+      fetch('http://localhost:3000/brand')
+        .then(response => response.json())
+        .then(data => {
+          setBrand(data.data);
+          console.log('Success:', data);
+        })
+        .catch(error => console.error('Error:', error));
+    }, []);
+
+
+  // console.log(formData)
 
   async function postData() {
     try {
       const mappedData = {
-        kode: formData.kodeProduk,
-        nama: formData.namaProduk,
-        stok: parseInt(formData.stok),
-        satuan: formData.satuanProduk,
-        jenis: formData.jenisProduk,
-        hargaJual: parseFloat(formData.hargaJual),
-        keterangan: formData.deskripsiProduk,
-        gudang: formData.gudangProduk,
-        merek: formData.merekProduk
+        code: formData.kodeProduk,
+        name: formData.namaProduk,
+        stock: parseInt(formData.stok),
+        unit: formData.satuanProduk,
+        type: formData.jenisProduk,
+        price: parseFloat(formData.hargaJual),
+        description: formData.deskripsiProduk,
+        warehouseId: formData.gudangProduk,
+        brand: formData.merekProduk
       };
   
-      const response = await fetch('http://localhost:3000/item/add', {
+      const response = await fetch('http://localhost:3000/item', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,26 +152,26 @@ export default function AddProduct({onAddProduct}) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tambah Produk Baru</CardTitle>
-        <CardDescription>Isi formulir untuk menambahkan produk baru ke inventory Anda.</CardDescription>
+        <CardTitle>Tambah Barang Baru</CardTitle>
+        <CardDescription>Isi formulir untuk menambahkan barang baru ke inventory Anda.</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-2">
-            <Label htmlFor="kodeProduk">Kode Produk</Label>
-            <Input name="kodeProduk" placeholder="Masukkan kode produk" onChange={handleChange} value={formData.kodeProduk} required/>
+            <Label htmlFor="kodeProduk">Kode Barang</Label>
+            <Input name="kodeProduk" placeholder="Masukkan kode barang" onChange={handleChange} value={formData.kodeProduk} required/>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="namaProduk">Nama Produk</Label>
-            <Input name="namaProduk" placeholder="Masukkan nama produk" onChange={handleChange} value={formData.namaProduk} required/>
+            <Label htmlFor="namaProduk">Nama Barang</Label>
+            <Input name="namaProduk" placeholder="Masukkan nama barang" onChange={handleChange} value={formData.namaProduk} required/>
           </div>
           <div className="grid gap-2">
               <Label htmlFor="stok">Stok</Label>
               <Input name="stok" placeholder="Masukan stok" type="number" min="0" max="100000" onChange={handleChange} value={formData.stok} required/>
             </div>
           <div className="grid gap-2">
-            <Label htmlFor="satuanProduk">Satuan Produk</Label>
-            <Input name="satuanProduk" placeholder="Masukkan satuan produk" list="defaultOption" onChange={handleChange} value={formData.satuanProduk} required/>
+            <Label htmlFor="satuanProduk">Satuan Barang</Label>
+            <Input name="satuanProduk" placeholder="Masukkan satuan barang" list="defaultOption" onChange={handleChange} value={formData.satuanProduk} required/>
             <datalist id="defaultOption">
               <option value="PCS"></option>
               <option value="BOX"></option>
@@ -136,16 +181,29 @@ export default function AddProduct({onAddProduct}) {
             </datalist>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="jenisProduk">Jenis Produk</Label>
-            <Input name="jenisProduk" placeholder="Masukkan jenis produk" onChange={handleChange} value={formData.jenisProduk} required/>
+            <Label htmlFor="jenisProduk">Jenis Barang</Label>
+            <Input name="jenisProduk" placeholder="Masukkan jenis barang" onChange={handleChange} value={formData.jenisProduk} required/>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="gudangProduk">Gudang Produk</Label>
-            <Input name="gudangProduk" placeholder="Masukkan gudang produk" onChange={handleChange} value={formData.gudangProduk} required/>
+            <Label htmlFor="gudangProduk">Gudang Barang</Label>
+          <select 
+            className="border p-2 rounded-md text-slate-500 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+            name="gudangProduk" 
+            onChange={handleChange} 
+            value={formData.gudangProduk} 
+            required
+          >
+            <option value="">--Pilih gudang barang--</option>
+            {warehouses.map(warehouse => (
+              <option key={warehouse._id} value={warehouse._id}>
+                {warehouse.warehouse}
+              </option>
+            ))}
+          </select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="merekProduk">Merek Produk</Label>
-            <Input name="merekProduk" placeholder="Masukkan merek produk" onChange={handleChange} value={formData.merekProduk} required/>
+            <Label htmlFor="merekProduk">Merek Barang</Label>
+            <Input name="merekProduk" placeholder="Masukkan merek barang" onChange={handleChange} value={formData.merekProduk} required/>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="hargaJual">Harga Jual (per barang)</Label>
@@ -153,7 +211,7 @@ export default function AddProduct({onAddProduct}) {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="deskripsiProduk">Deskripsi</Label>
-            <Textarea name="deskripsiProduk" placeholder="Masukkan deskripsi produk" onChange={handleChange} value={formData.deskripsiProduk}/>
+            <Textarea name="deskripsiProduk" placeholder="Masukkan deskripsi barang" onChange={handleChange} value={formData.deskripsiProduk}/>
           </div>
           <div className="flex gap-4">
             <Button className="flex-1 bg-gray-900/10" variant="outline" type="button" onClick={navigateToInventory}>

@@ -30,6 +30,7 @@ export default function EditProduct({ item, reloadData, onDeleteToast, onSuccess
     const [editedItem, setEditedItem] = useState({ ...item })
     const [isUpdating, setIsUpdating] = useState(false)
 
+
     const handleChange = (e) => {
         setIsUpdating(true)
         const { id, value } = e.target;
@@ -155,25 +156,25 @@ export default function EditProduct({ item, reloadData, onDeleteToast, onSuccess
                     <Label htmlFor="kode" className="text-right">
                     Kode
                     </Label>
-                    <Input id="kode" defaultValue={item.kode} onChange={handleChange} className="col-span-3" required/>
+                    <Input id="kode" defaultValue={item.code} onChange={handleChange} className="col-span-3" required/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="nama" className="text-right">
                     Nama
                     </Label>
-                    <Input id="nama" defaultValue={item.nama} onChange={handleChange} className="col-span-3" required/>
+                    <Input id="nama" defaultValue={item.name} onChange={handleChange} className="col-span-3" required/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="stok" className="text-right">
                     Stok
                     </Label>
-                    <Input id="stok" defaultValue={item.stok} onChange={handleChange} className="col-span-3" type="number"  min="0" max="100000" required/>
+                    <Input id="stok" defaultValue={item.stock} onChange={handleChange} className="col-span-3" type="number"  min="0" max="100000" required/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="satuan" className="text-right">
                     Satuan
                     </Label>
-                    <Input id="satuan" list="defaultOption" defaultValue={item.satuan} onChange={handleChange} className="col-span-3" required />
+                    <Input id="satuan" list="defaultOption" defaultValue={item.unit} onChange={handleChange} className="col-span-3" required />
                     <datalist id="defaultOption">
                         <option value="PCS"></option>
                         <option value="BOX"></option>
@@ -186,36 +187,36 @@ export default function EditProduct({ item, reloadData, onDeleteToast, onSuccess
                     <Label htmlFor="jenis" className="text-right">
                     Jenis
                     </Label>
-                    <Input id="jenis" defaultValue={item.jenis} onChange={handleChange} className="col-span-3" required />
+                    <Input id="jenis" defaultValue={item.type} onChange={handleChange} className="col-span-3" required />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="gudang" className="text-right">
                     Gudang
                     </Label>
-                    <Input id="gudang" defaultValue={item.gudang} onChange={handleChange} className="col-span-3" required/>
+                    <Input id="gudang" defaultValue={item.warehouseDetails[0].warehouse} onChange={handleChange} className="col-span-3" required/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="merek" className="text-right">
                     Merek
                     </Label>
-                    <Input id="merek" defaultValue={item.merek} onChange={handleChange} className="col-span-3" required/>
+                    <Input id="merek" defaultValue={item.brand} onChange={handleChange} className="col-span-3" required/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="hargaJual" className="text-right">
                     Harga Jual (per barang)
                     </Label>
-                    <Input id="hargaJual" defaultValue={item.hargaJual} onChange={handleChange} className="col-span-3" type="number" min="1000" required/>
+                    <Input id="hargaJual" defaultValue={item.price} onChange={handleChange} className="col-span-3" type="number" min="1000" required/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="keterangan" className="text-right">
                     Deskripsi
                     </Label>
-                    <Input id="keterangan" defaultValue={item.keterangan} onChange={handleChange} className="col-span-3"/>
+                    <Input id="keterangan" defaultValue={item.description} onChange={handleChange} className="col-span-3"/>
                 </div>
                 </div>     
                 <DialogFooter>
                 <DialogClose asChild>
-                    <Button type="submit" disabled={isUpdating || !editedItem.kode || !editedItem.nama}>Simpan perubahan</Button>
+                    <Button type="submit" disabled={isUpdating || !editedItem.code || !editedItem.name}>Simpan perubahan</Button>
                 </DialogClose>
                 </DialogFooter>
             </form>    

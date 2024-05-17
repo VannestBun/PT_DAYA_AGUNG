@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate, Link, Outlet } from "react-router-dom"
 import images from "./images/user-icon.png"
 import EditProduct from './EditProduct'
 import { Toaster, toast } from 'sonner'
@@ -13,14 +13,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-} from "../components/ui/dropdown-menu"
+} from "./ui/dropdown-menu"
 
 export default function Inventory({highlight}) {
 
   const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [stockFilter, setStockFilter] = useState('');
+  const [stockFilter, setStockFilter] = useState('')
 
 
 
@@ -43,12 +43,12 @@ export default function Inventory({highlight}) {
 
   const fetchData = useCallback(async () => {
     try {
-        const response = await fetch('http://localhost:3000/item/all')
+        const response = await fetch('http://localhost:3000/item')
         if (!response.ok) {
             throw new Error('Failed to fetch data')
         }
         const data = await response.json()
-        setItems(data);
+        setItems(data.data);
         // console.log('Fetched data:', data)
     } catch (error) {
         console.error('Error fetching data:', error.message)
@@ -75,9 +75,9 @@ export default function Inventory({highlight}) {
   )
   .filter((item) => {
     if (stockFilter === 'Habis') {
-      return item.stok === 0;
+      return item.stock === 0;
     } else if (stockFilter === 'Masih Ada') {
-      return item.stok > 0;
+      return item.stock > 0;
     } else {
       return true;
     }
@@ -86,72 +86,45 @@ export default function Inventory({highlight}) {
 
   return (
     <>
-    <div className="flex flex-col w-full">
-      <header className="flex items-center px-4 border-b shrink-0 md:px-6">
-        <nav className="flex-col text-base hidden gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6 mb-2">
-          <a className="font-bold" href="#">
-            Barang
-          </a>
-          <a className="text-gray-500 dark:text-gray-400" href="#">
-            Penjualan
-          </a>
-          <a className="text-gray-500 dark:text-gray-400" href="#">
-            Satuan
-          </a>
-          <a className="text-gray-500 dark:text-gray-400" href="#">
-            Jenis
-          </a>
-          <a className="text-gray-500 dark:text-gray-400" href="#">
-            Merek
-          </a>
-          <a className="text-gray-500 dark:text-gray-400" href="#">
-            Gudang
-          </a>
-          {/* <a className="text-gray-500 dark:text-gray-400" href="#">
-            Products
-          </a> */}
-        </nav>
-        <div className="flex items-center w-full gap-4 md:ml-auto md:gap-2 lg:gap-4">
-          <form className="flex-1 ml-auto sm:flex-initial gap-1">
-            <div className="relative">
-              <SearchIcon className="absolute left-2.5 top-2.5 h-5 w-4 text-gray-500 dark:text-gray-400" />
-              <Input
-                className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px] mb-2"
-                placeholder="Cari barang..."
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </form>
-          <div className="mb-2">
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                      <Button className="p-4 border rounded-md"><FilterIcon className="w-5 h-5 mr-2" />{stockFilter ? stockFilter : 'Filter Stock'}</Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => setStockFilter('Habis')}>Stok Habis</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setStockFilter('Masih Ada')}>Stok Ada</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setStockFilter('')}>Semua Stok</DropdownMenuItem>
-                  </DropdownMenuContent>
-              </DropdownMenu>
-          </div>
-        </div>
-      </header>
-    </div>
-
-    
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2">
       <div className='flex items-center'>
         <BoxIcon className="w-6 h-6 mr-2" />
         <h1 className="font-semibold text-lg md:text-2xl">Barang</h1>
       </div>
-        <Button size="sm" variant="outline" onClick={handleAddProduct}>
-          <PlusIcon className="w-4 h-4 mr-2" />
-            Tambah Barang
+      
+      <div className="flex items-center gap-4">
+        <form className="flex-1 ml-auto sm:flex-initial gap-1">
+          <div className="relative">
+            <SearchIcon className="absolute left-2.5 top-2.5 h-5 w-4 text-gray-500 dark:text-gray-400" />
+            <Input
+              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+              placeholder="Cari barang..."
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </form>
+        <div>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button className="p-4 border rounded-md"><FilterIcon className="w-5 h-5 mr-2" />{stockFilter ? stockFilter : 'Filter Stok'}</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => setStockFilter('Habis')}>Stok Habis</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setStockFilter('Masih Ada')}>Stok Ada</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setStockFilter('')}>Semua Stok</DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+        <Button variant="outline" onClick={handleAddProduct}>
+        <PlusIcon className="w-5 h-5 mr-2" />
+          Tambah Barang
         </Button>
       </div>
+    </div>
+
       <div className="border shadow-sm rounded-lg">
         <Table>
           <TableHeader className="bg-gray-100">
@@ -170,22 +143,22 @@ export default function Inventory({highlight}) {
 
             <TableBody>
             {filteredItems.slice().reverse().map((item, index) => (
-              <TableRow key={item.kode} className={`${index === 0 && highlight ? "highlight-item" : ""} hover:bg-muted/50`}>
+              <TableRow key={item.code} className={`${index === 0 && highlight ? "highlight-item" : ""} hover:bg-muted/50`}>
             
-              <TableCell>{item.kode}</TableCell>
-                <TableCell>{item.nama}</TableCell>
+              <TableCell>{item.code}</TableCell>
+                <TableCell>{item.name}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <span>{item.stok}</span>
+                    <span>{item.stock}</span>
                     <Badge
                     className={
-                      item.stok === 0
+                      item.stock === 0
                         ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 py-1"
                         : "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 py-1"
                     }
                     variant="outline"
                   >
-                    {item.stok === 0 ? (
+                    {item.stock === 0 ? (
                       <>
                         <CircleAlertIcon className="w-4 h-4 mr-2" />
                         Stok Habis
@@ -200,11 +173,11 @@ export default function Inventory({highlight}) {
 
                   </div>
                 </TableCell>
-                <TableCell>{item.satuan}</TableCell>
-                <TableCell>{item.jenis}</TableCell>
-                <TableCell>{item.gudang}</TableCell>
-                <TableCell>{item.merek}</TableCell>
-                <TableCell>Rp{(item.hargaJual * item.stok).toLocaleString('id-ID')}</TableCell>
+                <TableCell>{item.unit}</TableCell>
+                <TableCell>{item.type}</TableCell>
+                <TableCell>{item.warehouseDetails[0].warehouse}</TableCell>
+                <TableCell>{item.brand}</TableCell>
+                <TableCell>Rp{(item.price * item.stock).toLocaleString('id-ID')}</TableCell>
                 <TableCell>
                   <EditProduct key={item._id} item={item} reloadData={fetchData} onDeleteToast={handleDeleteItemToast} onSuccessToast={handleSuccessEditedToast} onFailToEditToast={handleFailEditedToast} />
                 </TableCell>
@@ -215,6 +188,7 @@ export default function Inventory({highlight}) {
     </div>
     <Toaster richColors />
   </main>
+  <Outlet />
   </>
   )
 }
