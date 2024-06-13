@@ -3,7 +3,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import EditItemProperty from './EditItemProperty';
 
 
-export default function ListTable({ data, headers }) {
+export default function ListTable({ data, headers, reloadData, onDeleteToast, onSuccessToast, onFailToEditToast }) {
   return (
     <div className="border shadow-sm rounded-lg">
       <Table>
@@ -20,7 +20,11 @@ export default function ListTable({ data, headers }) {
               {headers.map((header) => (
                 <TableCell key={header.key}>
                   {header.key !== 'actions' ? item[header.key] : (
-                    <EditItemProperty item={item} header={headers} />
+                    <EditItemProperty item={item} header={headers}
+                    reloadData={reloadData}
+                              onDeleteToast={onDeleteToast}
+                              onSuccessToast={onSuccessToast}
+                              onFailToEditToast={onFailToEditToast} />
                   )}
                 </TableCell>
               ))}

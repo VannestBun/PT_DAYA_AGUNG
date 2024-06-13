@@ -3,13 +3,29 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchBrands } from '../../ServiceLayer';
 import ListTable from './ListTable';
 import { Layers2 } from 'lucide-react';
+import { Toaster, toast } from 'sonner';
 
 export default function Brand() {
-  const { data: brands = [], error, isLoading } = useQuery({
+  const { data: brands = [], error, isLoading, refetch } = useQuery({
     queryKey: ['brands'],
     queryFn: fetchBrands,
   });
 
+  const handleDeleteItemToast = () => { 
+    toast.success('Barang telah berhasil dihapus');
+  };
+
+  const handleSuccessEditedToast = () => {
+    toast.success('Perubahan telah berhasil diterapkan');
+  };
+
+  const handleFailEditedToast = () => {
+    toast.error('Gagal merubah barang, kode atau nama barang sudah ada');
+  };
+
+  const refetchItems = () => {
+    refetch();
+  }
   // so the reason you can't do it is because the toast is specific to inventory, therefore you need one for the specific component
 
   if (isLoading) return (
@@ -37,9 +53,14 @@ export default function Brand() {
         <div className='flex items-center'>
           <Layers2 className="w-6 h-6 mr-2" />
           <h1 className="font-semibold text-lg md:text-2xl">Merek</h1>
-          {/* <button onClick={handleSuccessEditedToast}>click me for toast</button> */}
+          <button onClick={handleSuccessEditedToast}>click me for toast</button>
         </div>
-        <ListTable data={brands} headers={headers} />
+        <ListTable data={brands} headers={headers}
+                              reloadData={refetchItems}
+                              onDeleteToast={handleDeleteItemToast}
+                              onSuccessToast={handleSuccessEditedToast}
+                              onFailToEditToast={handleFailEditedToast}/>
+        <Toaster richColors />
       </main>
     </>
   );

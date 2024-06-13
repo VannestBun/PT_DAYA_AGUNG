@@ -15,7 +15,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { editItemProperty } from "../../ServiceLayer";
 
-export default function EditItemProperty({ item, header }) {
+export default function EditItemProperty({ item, header, reloadData, onDeleteToast, onSuccessToast, onFailToEditToast }) {
   const [editedItem, setEditedItem] = useState(item); 
 
 //   right now this only works for brand, it can already edit but no toaster, not automatic update, no refecthing
@@ -34,7 +34,11 @@ export default function EditItemProperty({ item, header }) {
     try {
       const response = await editItemProperty('brand', editedItem._id, editedItem);
       editItemProperty(response);
+      reloadData()
+      onSuccessToast()
     } catch (error) {
+      reloadData();
+      onFailToEditToast();
       console.error('Failed to save changes:', error);
     }
   };
