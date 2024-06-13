@@ -9,18 +9,16 @@ import Satuan from "./components/Inventory-pages/Unit"
 import Merek from "./components/Inventory-pages/Brand"
 import Jenis from "./components/Inventory-pages/Type"
 import Gudang from "./components/Inventory-pages/Warehouse"
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
-import React, { createContext, useState } from 'react'
-
-const FormDataContext = React.createContext();
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import React, { useState } from 'react'
 
 export default function App() {
 
-  const [highlight, setHighlight] = useState(false);
+  const [highlight, setHighlight] = useState(false)
 
   const triggerHighlight = () => {
-      setHighlight(true);
-      setTimeout(() => setHighlight(false), 3000);
+      setHighlight(true)
+      setTimeout(() => setHighlight(false), 3000)
   };
 
   const [formData, setFormData] = useState({
@@ -33,31 +31,33 @@ export default function App() {
     gudangProduk: '',
     merekProduk: '',
     deskripsiProduk: ''
-  });
+  })
    
   return (
-    <FormDataContext.Provider value={{ formData, setFormData }}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Header />}>
-            <Route index element={<Dashboard />} />
-            <Route path="tambah-produk" element={<AddProduct onAddProduct={triggerHighlight} />} />
-            <Route path="pesanan" element={<Order />} />
-            <Route path="pelanggan" element={<Customers  />}/>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Header />}>
+          <Route index element={<Dashboard />} />
+          <Route path="tambah-produk" 
+            element={<AddProduct 
+              onAddProduct={triggerHighlight} 
+              formData={formData} 
+              setFormData={setFormData}
+            />} 
+          />
+          <Route path="pesanan" element={<Order />} />
+          <Route path="pelanggan" element={<Customers  />}/>
 
-            <Route path="inventory" element={<InventoryLayout />}>
-              <Route index element={<Inventory highlight={highlight} />} />
-              <Route path="satuan" element={<Satuan />} />
-              <Route path="jenis" element={<Jenis />} />
-              <Route path="merek" element={<Merek />} />
-              <Route path="gudang" element={<Gudang />} />
-            </Route>
-
+          <Route path="inventory" element={<InventoryLayout />}>
+            <Route index element={<Inventory highlight={highlight} />} />
+            <Route path="satuan" element={<Satuan />} />
+            <Route path="jenis" element={<Jenis />} />
+            <Route path="merek" element={<Merek />} />
+            <Route path="gudang" element={<Gudang />} />
           </Route>
-        </Routes>
-      </BrowserRouter>
-    </FormDataContext.Provider>
+
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
-
-export { FormDataContext }

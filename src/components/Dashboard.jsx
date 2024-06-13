@@ -2,8 +2,10 @@
  import { ResponsiveLine } from "@nivo/line"
  import { ResponsiveBar } from "@nivo/bar"
  import { Link } from "react-router-dom"
+ import React from 'react';
  
  export default function Dashboard() {
+
    return (
      <main className="flex-1 grid grid-cols-1">
        <div className="p-6 md:p-8">

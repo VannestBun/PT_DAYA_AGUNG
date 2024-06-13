@@ -14,9 +14,6 @@ export default function InventoryLayout() {
           <NavLink to="/inventory" className="text-gray-500 dark:text-gray-400 transition-all" style={({ isActive }) => isActive ? activeStyle : null} end>
             Barang
           </NavLink>
-          <NavLink to="/inventory/penjualan" className="text-gray-500 dark:text-gray-400 transition-all" style={({ isActive }) => isActive ? activeStyle : null}>
-            Penjualan
-          </NavLink>
           <NavLink to="/inventory/satuan" className="text-gray-500 dark:text-gray-400 transition-all" style={({ isActive }) => isActive ? activeStyle : null}>
             Satuan
           </NavLink>

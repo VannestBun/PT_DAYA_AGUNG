@@ -1,197 +1,199 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { useNavigate, Link, Outlet } from "react-router-dom"
-import images from "./images/user-icon.png"
-import EditProduct from './EditProduct'
-import { Toaster, toast } from 'sonner'
+import React, { useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate, Outlet } from "react-router-dom";
+import images from "./images/user-icon.png";
+import EditProduct from './EditProduct';
+import { Toaster, toast } from 'sonner';
+import { fetchItems } from '../ServiceLayer';
+import { useQuery } from '@tanstack/react-query';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
 } from "./ui/dropdown-menu"
 
-export default function Inventory({highlight}) {
 
-  const navigate = useNavigate()
-  const [items, setItems] = useState([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const [stockFilter, setStockFilter] = useState('')
+export default function Inventory({ highlight }) {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [stockFilter, setStockFilter] = useState('');
 
-
-
-  const reverseAndUpdateItems = () => {
-    const reversedArray = [...items].reverse()
-    setItems(reversedArray)
-  }
-
-  const handleDeleteItemToast = () => {
-    toast.success('Barang telah berhasil dihapus')
-  }
+  const handleDeleteItemToast = () => { 
+    toast.success('Barang telah berhasil dihapus');
+  };
 
   const handleSuccessEditedToast = () => {
-    toast.success('Perubahan telah berhasil diterapkan')
-  }
+    toast.success('Perubahan telah berhasil diterapkan');
+  };
 
   const handleFailEditedToast = () => {
-    toast.error('Gagal merubah barang, kode atau nama barang sudah ada')
-  }
+    toast.error('Gagal merubah barang, kode atau nama barang sudah ada');
+  };
 
-  const fetchData = useCallback(async () => {
-    try {
-        const response = await fetch('http://localhost:3000/item')
-        if (!response.ok) {
-            throw new Error('Failed to fetch data')
-        }
-        const data = await response.json()
-        setItems(data.data);
-        // console.log('Fetched data:', data)
-    } catch (error) {
-        console.error('Error fetching data:', error.message)
-    }
-  }, [])
-
-  useEffect(() => {
-      reverseAndUpdateItems()
-      fetchData()
-  }, [fetchData])
-
-  const handleAddProduct = () => {
-    navigate("/tambah-produk")
-  }
-
-  const filteredItems = items
-  .filter((item) =>
-    Object.entries(item).some(([key, value]) =>
-      key !== '_id' &&
-      typeof value === 'string' &&
-      value.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      value.length >= searchQuery.length
-    )
-  )
-  .filter((item) => {
-    if (stockFilter === 'Habis') {
-      return item.stock === 0;
-    } else if (stockFilter === 'Masih Ada') {
-      return item.stock > 0;
-    } else {
-      return true;
-    }
+  const { data: items = [], error, isLoading, refetch } = useQuery({
+    queryKey: ['items'],
+    queryFn: fetchItems,
   });
 
+  const refetchItems = () => {
+    refetch();
+  }
+
+  if (isLoading) return (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
+    <div className="lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  ) 
+
+  if (error) return <p>Error: {error.message}</p>;
+
+  const handleAddProduct = () => {
+    navigate("/tambah-produk");
+  };
+
+  const filteredItems = items
+    .filter((item) =>
+      Object.entries(item).some(([key, value]) =>
+        key !== '_id' &&
+        typeof value === 'string' &&
+        value.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        value.length >= searchQuery.length
+      )
+    )
+    .filter((item) => {
+      if (stockFilter === 'Habis') {
+        return item.stock === 0;
+      } else if (stockFilter === 'Masih Ada') {
+        return item.stock > 0;
+      } else {
+        return true;
+      }
+    });
 
   return (
     <>
-    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8">
-      <div className="flex items-center justify-between mb-2">
-      <div className='flex items-center'>
-        <BoxIcon className="w-6 h-6 mr-2" />
-        <h1 className="font-semibold text-lg md:text-2xl">Barang</h1>
-      </div>
-      
-      <div className="flex items-center gap-4">
-        <form className="flex-1 ml-auto sm:flex-initial gap-1">
-          <div className="relative">
-            <SearchIcon className="absolute left-2.5 top-2.5 h-5 w-4 text-gray-500 dark:text-gray-400" />
-            <Input
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-              placeholder="Cari barang..."
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8">
+        <div className="flex items-center justify-between mb-2">
+          <div className='flex items-center'>
+            <BoxIcon className="w-6 h-6 mr-2" />
+            <h1 className="font-semibold text-lg md:text-2xl">Barang</h1>
           </div>
-        </form>
-        <div>
-            <DropdownMenu>
+
+          <div className="flex items-center gap-4">
+            <form className="flex-1 ml-auto sm:flex-initial gap-1">
+              <div className="relative">
+                <SearchIcon className="absolute left-2.5 top-2.5 h-5 w-4 text-gray-500 dark:text-gray-400" />
+                <Input
+                  className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+                  placeholder="Cari barang..."
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </form>
+            <div>
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button className="p-4 border rounded-md"><FilterIcon className="w-5 h-5 mr-2" />{stockFilter ? stockFilter : 'Filter Stok'}</Button>
+                  <Button className="p-4 border rounded-md"><FilterIcon className="w-5 h-5 mr-2" />{stockFilter ? stockFilter : 'Filter Stok'}</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setStockFilter('Habis')}>Stok Habis</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStockFilter('Masih Ada')}>Stok Ada</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStockFilter('')}>Semua Stok</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStockFilter('Habis')}>Stok Habis</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStockFilter('Masih Ada')}>Stok Ada</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStockFilter('')}>Semua Stok</DropdownMenuItem>
                 </DropdownMenuContent>
-            </DropdownMenu>
+              </DropdownMenu>
+            </div>
+            <Button variant="outline" onClick={handleAddProduct}>
+              <PlusIcon className="w-5 h-5 mr-2" />
+              Tambah Barang
+            </Button>
+          </div>
         </div>
-        <Button variant="outline" onClick={handleAddProduct}>
-        <PlusIcon className="w-5 h-5 mr-2" />
-          Tambah Barang
-        </Button>
-      </div>
-    </div>
 
-      <div className="border shadow-sm rounded-lg">
-        <Table>
-          <TableHeader className="bg-gray-100">
-            <TableRow>
-              <TableHead>Kode</TableHead>
-              <TableHead>Nama Produk</TableHead>
-              <TableHead className="text-center">Stok</TableHead>
-              <TableHead>Satuan</TableHead>
-              <TableHead>Jenis</TableHead>
-              <TableHead>Gudang</TableHead>
-              <TableHead>Merek</TableHead>
-              <TableHead>HargaJual</TableHead>
-              <TableHead className="text-center">Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
+        <div className="border shadow-sm rounded-lg">
+          <Table>
+            <TableHeader className="bg-gray-100">
+              <TableRow>
+                <TableHead>Kode</TableHead>
+                <TableHead>Nama Produk</TableHead>
+                <TableHead className="text-center">Stok</TableHead>
+                <TableHead>Satuan</TableHead>
+                <TableHead>Jenis</TableHead>
+                <TableHead>Gudang</TableHead>
+                <TableHead>Merek</TableHead>
+                <TableHead>HargaJual</TableHead>
+                <TableHead className="text-center">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
 
             <TableBody>
-            {filteredItems.slice().reverse().map((item, index) => (
-              <TableRow key={item.code} className={`${index === 0 && highlight ? "highlight-item" : ""} hover:bg-muted/50`}>
-            
-              <TableCell>{item.code}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <span>{item.stock}</span>
-                    <Badge
-                    className={
-                      item.stock === 0
-                        ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 py-1"
-                        : "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 py-1"
-                    }
-                    variant="outline"
-                  >
-                    {item.stock === 0 ? (
-                      <>
-                        <CircleAlertIcon className="w-4 h-4 mr-2" />
-                        Stok Habis
-                      </>
-                    ) : (
-                      <>
-                        <CircleCheckIcon className="w-4 h-4 mr-2" />
-                        Stok Ada
-                      </>
-                    )}
-                  </Badge>
-
-                  </div>
-                </TableCell>
-                <TableCell>{item.unit}</TableCell>
-                <TableCell>{item.type}</TableCell>
-                <TableCell>{item.warehouseDetails[0].warehouse}</TableCell>
-                <TableCell>{item.brand}</TableCell>
-                <TableCell>Rp{(item.price * item.stock).toLocaleString('id-ID')}</TableCell>
-                <TableCell>
-                  <EditProduct key={item._id} item={item} reloadData={fetchData} onDeleteToast={handleDeleteItemToast} onSuccessToast={handleSuccessEditedToast} onFailToEditToast={handleFailEditedToast} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-      </Table>
-    </div>
-    <Toaster richColors />
-  </main>
-  <Outlet />
-  </>
-  )
+              {filteredItems.slice().reverse().map((item, index) => (
+                <TableRow key={item.code} className={`${index === 0 && highlight ? "highlight-item" : ""} hover:bg-muted/50`}>
+                  <TableCell>{item.code}</TableCell>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span>{item.stock}</span>
+                      <Badge
+                        className={
+                          item.stock === 0
+                            ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 py-1"
+                            : "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 py-1"
+                        }
+                        variant="outline"
+                      >
+                        {item.stock === 0 ? (
+                          <>
+                            <CircleAlertIcon className="w-4 h-4 mr-2" />
+                            Stok Habis
+                          </>
+                        ) : (
+                          <>
+                            <CircleCheckIcon className="w-4 h-4 mr-2" />
+                            Stok Ada
+                          </>
+                        )}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell>{item.unit}</TableCell>
+                  <TableCell>{item.type}</TableCell>
+                  <TableCell>{item.warehouseDetails[0].warehouse}</TableCell>
+                  <TableCell>{item.brand}</TableCell>
+                  <TableCell>Rp{(item.price * item.stock).toLocaleString('id-ID')}</TableCell>
+                  <TableCell>
+                    <EditProduct
+                      key={item._id}
+                      item={item}
+                      reloadData={refetchItems}
+                      onDeleteToast={handleDeleteItemToast}
+                      onSuccessToast={handleSuccessEditedToast}
+                      onFailToEditToast={handleFailEditedToast}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <Toaster richColors />
+      </main>
+      <Outlet />
+    </>
+  );
 }
+
+// Built-Icons 
   
 function BoxIcon(props) {
   return (
