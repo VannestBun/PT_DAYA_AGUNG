@@ -124,5 +124,40 @@ export const fetchItems = async () => {
     }
   }
 
+  export async function addItemProperty(property, newItem) {
+    const response = await fetch(`http://localhost:3000/${property}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newItem),
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to add item');
+    }
+  
+    return response.json();
+  }
+
+export async function deleteItemProperty(itemProperty, itemPropertyId) {
+  try {
+    const response = await fetch(`http://localhost:3000/${itemProperty}/${itemPropertyId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete item');
+    }
+
+    return true;
+  } catch (error) {
+    throw error;
+  }
+}
+
 
   

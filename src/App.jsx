@@ -9,6 +9,7 @@ import Satuan from "./components/Inventory-pages/Unit"
 import Merek from "./components/Inventory-pages/Brand"
 import Jenis from "./components/Inventory-pages/Type"
 import Gudang from "./components/Inventory-pages/Warehouse"
+import AddItemProperty from "./components/Inventory-pages/AddItemProperty"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import React, { useState } from 'react'
 
@@ -47,6 +48,7 @@ export default function App() {
           />
           <Route path="pesanan" element={<Order />} />
           <Route path="pelanggan" element={<Customers  />}/>
+          <Route path="tambah-produk-property" element={<AddItemProperty />} />
 
           <Route path="inventory" element={<InventoryLayout />}>
             <Route index element={<Inventory highlight={highlight} />} />

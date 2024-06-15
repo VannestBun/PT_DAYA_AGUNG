@@ -26,7 +26,6 @@ export default function Brand() {
   const refetchItems = () => {
     refetch();
   }
-  // so the reason you can't do it is because the toast is specific to inventory, therefore you need one for the specific component
 
   if (isLoading) return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
@@ -40,7 +39,6 @@ export default function Brand() {
     ) 
   if (error) return <div>Error: {error.message}</div>;
 
-  // Define the headers you want to display and the corresponding keys in the data
   const headers = [
     { displayName: 'Merek', key: 'brand' },
     { displayName: 'Deskripsi', key: 'description' },
@@ -53,15 +51,17 @@ export default function Brand() {
         <div className='flex items-center'>
           <Layers2 className="w-6 h-6 mr-2" />
           <h1 className="font-semibold text-lg md:text-2xl">Merek</h1>
-          <button onClick={handleSuccessEditedToast}>click me for toast</button>
         </div>
-        <ListTable data={brands} headers={headers}
-                              reloadData={refetchItems}
-                              onDeleteToast={handleDeleteItemToast}
-                              onSuccessToast={handleSuccessEditedToast}
-                              onFailToEditToast={handleFailEditedToast}/>
+        <ListTable 
+          data={brands} 
+          headers={headers}
+          reloadData={refetchItems}
+          onDeleteToast={handleDeleteItemToast}
+          onSuccessToast={handleSuccessEditedToast}
+          onFailToEditToast={handleFailEditedToast}/>
         <Toaster richColors />
       </main>
     </>
   );
 }
+

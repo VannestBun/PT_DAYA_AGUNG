@@ -1,15 +1,31 @@
 import React from 'react'
-import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
 import { fetchWarehouses } from '../../ServiceLayer'
 import ListTable from './ListTable'
-import  { WarehouseIcon } from 'lucide-react'
+import { WarehouseIcon } from 'lucide-react'
+import { Toaster, toast } from 'sonner'
 
 export default function Warehouse() {
-  const { data: warehouse = [], error, isLoading } = useQuery({
-    queryKey: ['Warehouses'],
+  const { data: warehouses = [], error, isLoading, refetch } = useQuery({
+    queryKey: ['warehouses'],
     queryFn: fetchWarehouses,
-  });
+  })
+
+  const handleDeleteItemToast = () => {
+    toast.success('Gudang telah berhasil dihapus')
+  }
+
+  const handleSuccessEditedToast = () => {
+    toast.success('Perubahan telah berhasil diterapkan')
+  }
+
+  const handleFailEditedToast = () => {
+    toast.error('Gagal merubah gudang')
+  }
+
+  const refetchItems = () => {
+    refetch()
+  }
 
   if (isLoading) return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
@@ -20,12 +36,13 @@ export default function Warehouse() {
         <div></div>
       </div>
     </div>
-    ) 
+  )
+
   if (error) return <div>Error: {error.message}</div>
 
   const headers = [
     { displayName: 'Gudang', key: 'warehouse' },
-    { displayName: 'Deskripsi', key: 'description'},
+    { displayName: 'Deskripsi', key: 'description' },
     { displayName: 'Aksi', key: 'actions' }
   ]
 
@@ -36,8 +53,16 @@ export default function Warehouse() {
           <WarehouseIcon className="w-6 h-6 mr-2" />
           <h1 className="font-semibold text-lg md:text-2xl">Gudang</h1>
         </div>
-        <ListTable data={warehouse} headers={headers} />
+        <ListTable 
+          data={warehouses} 
+          headers={headers}
+          reloadData={refetchItems}
+          onDeleteToast={handleDeleteItemToast}
+          onSuccessToast={handleSuccessEditedToast}
+          onFailToEditToast={handleFailEditedToast}
+        />
+        <Toaster richColors />
       </main>
     </>
-  );
+  )
 }
