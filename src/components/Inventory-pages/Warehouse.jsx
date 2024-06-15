@@ -11,17 +11,17 @@ export default function Warehouse() {
     queryFn: fetchWarehouses,
   })
 
-  const handleDeleteItemToast = () => {
-    toast.success('Gudang telah berhasil dihapus')
-  }
+  const handleDeleteItemToast = () => { 
+    toast.success(`${headers[0].displayName} telah berhasil dihapus`);
+  };
 
   const handleSuccessEditedToast = () => {
-    toast.success('Perubahan telah berhasil diterapkan')
-  }
+    toast.success('Perubahan telah berhasil diterapkan');
+  };
 
   const handleFailEditedToast = () => {
-    toast.error('Gagal merubah gudang')
-  }
+    toast.error(`Gagal merubah ${headers[0].displayName}, ${headers[0].displayName} sudah ada`);
+  };
 
   const refetchItems = () => {
     refetch()

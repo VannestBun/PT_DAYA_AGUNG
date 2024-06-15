@@ -11,8 +11,8 @@ export default function Type() {
     queryFn: fetchTypes,
   });
 
-  const handleDeleteItemToast = () => {
-    toast.success('Barang telah berhasil dihapus');
+  const handleDeleteItemToast = () => { 
+    toast.success(`${headers[0].displayName} telah berhasil dihapus`);
   };
 
   const handleSuccessEditedToast = () => {
@@ -20,9 +20,8 @@ export default function Type() {
   };
 
   const handleFailEditedToast = () => {
-    toast.error('Gagal merubah barang, kode atau nama barang sudah ada');
+    toast.error(`Gagal merubah ${headers[0].displayName}, ${headers[0].displayName} sudah ada`);
   };
-
   const refetchItems = () => {
     refetch();
   };

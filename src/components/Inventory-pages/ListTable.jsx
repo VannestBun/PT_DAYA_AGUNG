@@ -265,7 +265,7 @@ export default function ListTable({ data, headers, reloadData, onDeleteToast, on
             itemFields={headers.filter(header => header.key !== 'actions').map(header => ({
               key: header.key,
               label: header.displayName,
-              required: true, // Assuming all fields are required; adjust as needed
+              required: true,
             }))}
             onAddProperty={reloadData}
           />

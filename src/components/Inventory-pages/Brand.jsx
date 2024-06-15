@@ -4,6 +4,7 @@ import { fetchBrands } from '../../ServiceLayer';
 import ListTable from './ListTable';
 import { Layers2 } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
+import AddItemProperty from './AddItemProperty';
 
 export default function Brand() {
   const { data: brands = [], error, isLoading, refetch } = useQuery({
@@ -12,7 +13,7 @@ export default function Brand() {
   });
 
   const handleDeleteItemToast = () => { 
-    toast.success('Barang telah berhasil dihapus');
+    toast.success(`${headers[0].displayName} telah berhasil dihapus`);
   };
 
   const handleSuccessEditedToast = () => {
@@ -20,7 +21,7 @@ export default function Brand() {
   };
 
   const handleFailEditedToast = () => {
-    toast.error('Gagal merubah barang, kode atau nama barang sudah ada');
+    toast.error(`Gagal merubah ${headers[0].displayName}, ${headers[0].displayName} sudah ada`);
   };
 
   const refetchItems = () => {
